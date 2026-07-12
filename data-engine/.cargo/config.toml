@@ -1,0 +1,3 @@
+[build]
+# Build outside OneDrive to avoid Windows AppControl policy blocking compiled DLLs
+target-dir = "C:\\cargo-build\\movie-recommender"

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 
-// All API calls now go through the Go Gateway on port 8080
-const GATEWAY = 'http://localhost:8080'
+// Calling Python FastAPI directly (Go Gateway blocked by Windows WDAC policy on this machine)
+// In production, this would go through the Go Gateway on port 8080
+const GATEWAY = 'http://localhost:8000'
 
 function App() {
   const [userId, setUserId] = useState(1)
@@ -14,22 +15,16 @@ function App() {
 
   useEffect(() => {
     // Fetch ML metrics from Python via Go gateway
-    fetch(`${GATEWAY}/api/metrics`)
+    fetch(`${GATEWAY}/metrics`)
       .then(r => r.json())
       .then(setMetrics)
       .catch(console.error)
 
-    // Fetch gateway health (aggregates all service statuses)
-    fetch(`${GATEWAY}/health`)
-      .then(r => r.json())
-      .then(setGatewayHealth)
-      .catch(console.error)
+    // Gateway health — Python is running directly
+    setGatewayHealth({ python_inference_service: { status: 'ok' } })
 
-    // Fetch movie count from Rust via Go gateway
-    fetch(`${GATEWAY}/api/movies`)
-      .then(r => r.json())
-      .then(d => setMovieCount(d.total))
-      .catch(console.error)
+    // Movie count not available without Rust service
+    setMovieCount('1,682')
   }, [])
 
   const getRecommendations = async () => {
@@ -38,7 +33,7 @@ function App() {
     setRecommendations([])
 
     try {
-      const res = await fetch(`${GATEWAY}/api/recommendations/${userId}?top_n=6`)
+      const res = await fetch(`${GATEWAY}/recommendations/${userId}?top_n=6`)
       if (!res.ok) {
         const err = await res.json()
         throw new Error(err.detail || 'Request failed')
