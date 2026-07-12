@@ -1,5 +1,11 @@
-# Ignore data directory (downloaded dataset)
+# Compiled binaries
+data-engine/target/
+gateway/gateway.exe
+*.exe
+
+# Data directory (downloaded dataset)
 data/
+data-engine/target/
 
 # Python cache
 __pycache__/
@@ -9,5 +15,13 @@ __pycache__/
 venv/
 .venv/
 
-# Ignore OS files
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Rust installer
+rustup-init.exe
